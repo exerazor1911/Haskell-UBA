@@ -48,3 +48,58 @@ contarPalabras a
   | otherwise = 1 + contarEspaciosEntrePalabras sinBlancosDeExtremos
   where
     sinBlancosDeExtremos = sacarBlancosDeExtremos a
+
+palabras :: [Char] -> [[Char]]
+palabras [] = []
+palabras (x : xs)
+  | x == ' ' = []
+  | otherwise = crearListaDePalabras listaFormateada
+  where
+    listaFormateada = sacarBlancosRepetidos (sacarBlancosDeExtremos (x : xs))
+
+crearListaDePalabras :: [Char] -> [[Char]]
+crearListaDePalabras [] = [[]]
+crearListaDePalabras (c : cs)
+  | c /= ' ' = (c : head (crearListaDePalabras cs)) : tail (crearListaDePalabras cs)
+  | otherwise = [] : crearListaDePalabras cs
+
+palabraMasLarga :: [Char] -> [Char]
+palabraMasLarga [] = []
+palabraMasLarga a = obtenerPalabraMasLarga (palabras a)
+
+-- HELPERS
+obtenerPalabraMasLarga :: [[Char]] -> [Char]
+obtenerPalabraMasLarga [] = []
+obtenerPalabraMasLarga (x : xs)
+  | longitud x > longitud (obtenerPalabraMasLarga xs) = x
+  | otherwise = obtenerPalabraMasLarga xs
+
+longitud :: [t] -> Int
+longitud [] = 0
+longitud (x : xs) = 1 + longitud xs
+
+-- Preguntar si hace falta sacar los blancos del final
+aplanar :: [[Char]] -> [Char]
+aplanar [] = []
+aplanar (x : xs) = x ++ aplanar xs
+
+aplanarConBlancos :: [[Char]] -> [Char]
+aplanarConBlancos [] = []
+aplanarConBlancos (x : xs) = x ++ [' '] ++ aplanarConBlancos xs
+
+aplanarConNBlancos :: [[Char]] -> Int -> [Char]
+aplanarConNBlancos [] _ = []
+aplanarConNBlancos (x : xs) n = x ++ agregarNBlancos n ++ aplanarConNBlancos xs n
+
+agregarNBlancos :: Int -> [Char]
+agregarNBlancos 1 = [' ']
+agregarNBlancos n = [' '] ++ agregarNBlancos (n - 1)
+
+-- con type Texto = [Char] cambia asi, por ej:
+type Texto = [Char]
+
+obtenerPalabraMasLargaTexto :: [Texto] -> Texto
+obtenerPalabraMasLargaTexto [] = []
+obtenerPalabraMasLargaTexto (x : xs)
+  | longitud x > longitud (obtenerPalabraMasLargaTexto xs) = x
+  | otherwise = obtenerPalabraMasLargaTexto xs
